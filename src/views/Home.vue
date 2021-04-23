@@ -1,7 +1,7 @@
 <template>
-  <div class="home">
+  <div class="home min-h-full bg-gray-100">
     <div class="flex flex-col">
-      <div class="flex bg-blue-200 p-6 justify-between">
+      <div class="flex fixed lg:w-1/3 w-full bg-blue-200 p-6 justify-between z-10">
         <div class="relative">
           <img class="w-16 h-16 rounded-full object-cover" :src="user.detail.photoURL != null ? user.detail.photoURL : require('@/assets/css/5907.jpg')">
           <div v-if="user.isLogin" class="absolute bg-green-500 w-4 h-4 rounded-full bottom-0 right-0"></div>
@@ -12,9 +12,10 @@
           <span class="text-white uppercase">Keluar</span>
         </button>
       </div>
-      <div class="flex flex-col pt-3 overflow-auto bg-gray-100">
+      <div class="flex flex-col pt-32 overflow-auto">
         <div
           v-for="(userDetail, index) in users" :key="index" 
+          @click="onChatPage(userDetail.uid)"
           class="flex items-center justify-between px-6 py-4 text-sm border-b border-gray-300 cursor-pointer">
           <div class="relative">
             <img class="w-16 h-16 rounded-full object-cover" :src="userDetail.detail.photoURL != null ? userDetail.detail.photoURL : require('@/assets/css/5907.jpg')">
@@ -59,6 +60,9 @@ export default {
       }).catch(error => {
         alert(error.message)
       })
+    },
+    onChatPage(uid) {
+      this.$router.push('/chat/' + uid)
     }
   }
 }
