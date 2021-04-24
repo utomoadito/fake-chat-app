@@ -30,19 +30,25 @@ const actions = {
         })
     },
     saveChat({commit}, data) {// eslint-disable-line
-        db.collection('chats').doc().set({
+        let payloadSelf = {
             created_at: new Date(),
             uid: data.uid,
             uidOpponent: data.uidOpponent,
-            message: data.msg
-        })
-        db.collection('chats').doc().set({
+            message: data.msg ? data.msg : ''
+        }
+        let payloadOpponent = {
             created_at: new Date(),
             uid: data.uidOpponent,
             uidOpponent: data.uid,
             isOpponent: true,
-            message: data.msg
-        })
+            message: data.msg ? data.msg : ''
+        }
+        if (data.base64Img && data.base64Img != '') {
+            payloadSelf.base64Img = data.base64Img
+            payloadOpponent.base64Img = data.base64Img
+        }
+        db.collection('chats').doc().set(payloadSelf)
+        db.collection('chats').doc().set(payloadOpponent)
     },
     getChats({commit}, data) {
         db.collection('chats')

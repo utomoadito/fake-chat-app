@@ -15,14 +15,18 @@
         </div>
       </div>
       <div class="flex flex-col pt-32 overflow-auto">
-        <div>
-          <div 
-            v-for="(chat, index) in filteredChats" :key="index" 
-            class="flex bg-gray-300 w-3/4 mx-4 my-2 p-2 rounded-md" :class="chat.isOpponent ? 'float-left':'float-right'">
-            <span v-html="chat.message"></span>
+        <div class="mb-32">
+          <div v-for="(chat, index) in filteredChats" :key="index" >
+            <div
+               v-if="chat.message != '' || chat.base64Img" 
+              class="flex-1 bg-gray-300 w-3/4 mx-4 my-2 p-2 rounded-md" :class="chat.isOpponent ? 'float-left':'float-right text-right'">
+              <img v-if="chat.base64Img" :src="chat.base64Img" />
+              <span v-html="chat.message"></span>
+            </div>
           </div>
         </div>
         <div class="flex fixed lg:w-1/3 w-full justify-between bg-blue-100 bottom-0">
+          <button @click="onAttach" class="bg-blue-400 p-2 ml-2 my-5 rounded-full text-white">+</button>
           <textarea
             v-model="msg"
             class="flex-grow m-2 py-2 px-4 mr-1 rounded-xl border border-gray-300 bg-gray-200 resize-none outline-none"
@@ -48,18 +52,25 @@
         </div>
       </div>
     </div>
+    <attachment-modal 
+      :modal="modal"
+      :uid="user.uid"
+      :uidOpponent="userOpponent.uid"  
+      @onClickCancel="onCloseModal" />
   </div>
 </template>
 
 <script>
 import { mapGetters, mapActions } from 'vuex'
+import AttachmentModal from '../components/AttachmentModal.vue'
 
 export default {
   name: 'Chat',
-  components: {},
+  components: {AttachmentModal},
   data() {
     return {
-      msg: ''
+      msg: '',
+      modal: false
     }
   },
   created() {
@@ -95,6 +106,12 @@ export default {
         uidOpponent: this.userOpponent.uid, 
         msg: this.msg})
       this.msg = ''
+    },
+    onAttach() {
+      this.modal = true
+    },
+    onCloseModal(val) {
+      this.modal = val
     }
   }
 }
