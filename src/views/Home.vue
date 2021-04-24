@@ -26,7 +26,7 @@
               {{ userDetail.detail.displayName != null ? userDetail.detail.displayName : userDetail.detail.email.substring(0, userDetail.detail.email.indexOf('@')) }}
             </div>
             <div class="text-gray-600">
-              Hey! Lets dance with me!
+              Hey! I am using fake chat app!
             </div>
           </div>
           <div class="text-lg font-bold">></div>

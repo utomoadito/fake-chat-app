@@ -3,22 +3,23 @@
     <div class="flex flex-col">
       <div class="flex fixed lg:w-1/3 w-full bg-blue-200 p-6 justify-between z-10">
         <div class="relative">
-          <img class="w-16 h-16 rounded-full object-cover" src="@/assets/css/5907.jpg">
-          <div class="absolute bg-green-500 w-4 h-4 rounded-full bottom-0 right-0"></div>
+          <img 
+            class="w-16 h-16 rounded-full object-cover" 
+            :src="userOpponent.detail?.photoURL != null ? userOpponent.detail?.photoURL : require('@/assets/css/5907.jpg')">
+          <div v-if="userOpponent.isLogin" class="absolute bg-green-500 w-4 h-4 rounded-full bottom-0 right-0"></div>
         </div>
         <div class="flex-1 pl-2">
           <div class="text-gray-700 text-2xl mt-4 font-semibold">
-            Milos
+            {{ userOpponent.detail?.displayName != null ? userOpponent.detail?.displayName : userOpponent.detail?.email.substring(0, userOpponent.detail?.email.indexOf('@')) }}
           </div>
         </div>
       </div>
       <div class="flex flex-col pt-32 overflow-auto">
         <div>
-          <div class="bg-gray-300 w-3/4 mx-4 my-2 p-2 rounded-md">
-            this is a basic mobile chat layout, build with tailwind css
-          </div>
-          <div class="bg-gray-300 w-3/4 mx-4 my-2 p-2 rounded-md float-right">
-            this is a basic mobile chat layout, build with tailwind css
+          <div 
+            v-for="(chat, index) in filteredChats" :key="index" 
+            class="flex bg-gray-300 w-3/4 mx-4 my-2 p-2 rounded-md" :class="chat.isOpponent ? 'float-left':'float-right'">
+            <span v-html="chat.message"></span>
           </div>
         </div>
         <div class="flex fixed lg:w-1/3 w-full justify-between bg-blue-100 bottom-0">
@@ -51,7 +52,7 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
+import { mapGetters, mapActions } from 'vuex'
 
 export default {
   name: 'Chat',
@@ -61,12 +62,39 @@ export default {
       msg: ''
     }
   },
+  created() {
+    this.getUserOpponentByUid(this.$route.params.uid)
+    if (this.chats.length <= 0) {
+      this.getChats({
+        uid: this.user.uid, 
+        uidOpponent: this.$route.params.uid
+      })
+    }
+  },
+  mounted() {
+    // if back button is pressed
+    window.onpopstate = () => {
+       this.$store.commit('setChats', [])
+    }
+  },
   computed: {
-    ...mapGetters(['user'])
+    ...mapGetters(['user', 'userOpponent', 'chats']),
+    filteredChats() {
+      let chats = this.chats
+      chats = chats.sort((a, b) => {
+        return a.created - b.created
+      })
+      return chats
+    }
   },
   methods: {
+    ...mapActions(['getUserOpponentByUid', 'saveChat', 'getChats']),
     onSendMsg() {
-      console.log(this.msg)
+      this.saveChat({
+        uid: this.user.uid, 
+        uidOpponent: this.userOpponent.uid, 
+        msg: this.msg})
+      this.msg = ''
     }
   }
 }
