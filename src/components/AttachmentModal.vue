@@ -26,12 +26,20 @@
                 role="dialog" aria-modal="true" aria-labelledby="modal-headline">
                 <div class="p-3">
                   <div class="flex flex-col overflow-auto mb-8">
-                    <div class="text-gray-700">
+                    <div class="text-gray-700 mb-2">
                       <label class="block mb-1 font-semibold text-lg" for="base64-img">Kode Base64</label>
                       <input 
                         v-model="base64Img"
                         class="w-full h-10 px-3 text-base placeholder-gray-600 border focus:shadow-outline" 
                         type="text" placeholder="Masukkan Kode Base64 Image" id="base64-img"/>
+                    </div>
+                    <div class="text-gray-700 mb-2">
+                      <label class="block mb-1 font-semibold text-lg" for="file-img">Upload File Gambar</label>
+                      <img :src="fileImg" />
+                      <input
+                        @change="onUploadImg"
+                        class="w-full h-10 px-3 text-base placeholder-gray-600 border focus:shadow-outline" 
+                        type="file" id="file-img"/>
                     </div>
                   </div>
                   <button 
@@ -65,22 +73,32 @@ export default {
   },
   data() {
     return {
-      base64Img: ''
+      base64Img: null,
+      fileImg: null,
     }
   },
   methods: {
     ...mapActions(['saveChat']),
     onClickCancel() {
-      this.base64Img = ''
+      this.base64Img = null
       this.$emit('onClickCancel', false)
+    },
+    onUploadImg(e) {
+      const image = e.target.files[0]
+      const reader = new FileReader()
+      reader.readAsDataURL(image)
+      reader.onload = (e) => {
+        this.fileImg = e.target.result
+      }
     },
     onSendMsg() {
       this.saveChat({
         uid: this.uid, 
         uidOpponent: this.uidOpponent,
-        base64Img: this.base64Img
+        base64Img: this.base64Img != null ? this.base64Img : this.fileImg
       })
-      this.base64Img = ''
+      this.base64Img = null
+      this.fileImg = null
       this.$emit('onClickCancel', false)
     }
   }
