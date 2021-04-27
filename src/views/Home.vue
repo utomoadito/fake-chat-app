@@ -54,11 +54,12 @@ export default {
   methods: {
      ...mapActions(['fetchAllUsers']),
     logout() {
-      db.collection('user').doc(this.user.uid).update({isLogin: false})
-      auth.signOut().then(() => {
-        this.$router.push('/login')
-      }).catch(error => {
-        alert(error.message)
+      db.collection('user').doc(this.user.uid).update({isLogin: false}).then(() => {
+        auth.signOut().then(() => {
+          this.$router.go('/login')
+        }).catch(error => {
+          alert(error.message)
+        })
       })
     },
     onChatPage(uid) {
