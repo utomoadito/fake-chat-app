@@ -1,5 +1,8 @@
 # fake-chat-app
 
+This is just fake chat app using Firebase and Vue.
+Good for practice if you curious about simple main flow of Chat Apps.
+
 ## Project setup
 ```
 npm install
@@ -18,6 +21,11 @@ npm run build
 ### Lints and fixes files
 ```
 npm run lint
+```
+
+### Don't forget to init the environment
+```
+mv .env.default .env
 ```
 
 ### Customize configuration
